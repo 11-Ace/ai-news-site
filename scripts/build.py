@@ -30,15 +30,15 @@ def format_date(iso_date: str) -> str:
         return iso_date[:10] if iso_date else "Unknown"
 
 def generate_article_html(article: dict) -> str:
-    return f'''
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">{article.get('source', 'Unknown')}</span>
-            <span class="date">{format_date(article.get('published', ''))}</span>
-        </div>
-        <h2><a href="{article.get('url', '#')}" target="_blank" rel="noopener">{article.get('title', 'Untitled')}</a></h2>
-        <p class="summary">{article.get('summary', '')}</p>
-    </article>'''
+    return f'''<article class="article-card">
+    <div class="article-meta">
+        <span class="source">{article.get('source', 'Unknown')}</span>
+        <span class="separator">•</span>
+        <span class="date">{format_date(article.get('published', ''))}</span>
+    </div>
+    <h2><a href="{article.get('url', '#')}" target="_blank" rel="noopener">{article.get('title', 'Untitled')}</a></h2>
+    <p class="summary">{article.get('summary', '')}</p>
+</article>'''
 
 def build_site():
     print("Building site...")

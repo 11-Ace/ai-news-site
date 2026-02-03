@@ -5,207 +5,335 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI News Digest</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 0 auto; padding: 20px; background: #fafafa; color: #333; }
-        header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ddd; }
-        h1 { font-size: 1.8rem; margin-bottom: 5px; }
-        .meta { color: #666; font-size: 0.9rem; }
-        .article-card { background: #fff; padding: 20px; margin-bottom: 15px; border-radius: 5px; border: 1px solid #e0e0e0; }
-        .article-card h2 { font-size: 1.1rem; margin: 8px 0; }
-        .article-card h2 a { color: #1a0dab; text-decoration: none; }
-        .article-card h2 a:hover { text-decoration: underline; }
-        .article-meta { font-size: 0.8rem; color: #666; }
-        .article-meta .source { font-weight: 600; color: #444; }
-        .article-meta .date::before { content: " • "; }
-        .summary { color: #555; font-size: 0.95rem; }
-        footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 0.85rem; }
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a68;
+            --text-muted: #6b7280;
+            --border-color: #e5e7eb;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-hover: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #0f0f1a;
+                --bg-secondary: #1a1a2e;
+                --bg-card: #16162a;
+                --text-primary: #f1f5f9;
+                --text-secondary: #cbd5e1;
+                --text-muted: #94a3b8;
+                --border-color: #2d2d44;
+                --accent: #60a5fa;
+                --accent-hover: #93c5fd;
+                --shadow: 0 1px 3px rgba(0,0,0,0.3);
+                --shadow-hover: 0 4px 12px rgba(0,0,0,0.4);
+            }
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            line-height: 1.7;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+        header {
+            text-align: center;
+            padding: 2.5rem 0 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .logo {
+            font-size: 2.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .tagline {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 0 auto 2rem;
+            max-width: 120px;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .article-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .article-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-1px);
+        }
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 0.625rem;
+        }
+        .article-meta .source {
+            font-weight: 600;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            font-size: 0.7rem;
+        }
+        .article-meta .separator {
+            color: var(--border-color);
+        }
+        .article-card h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 0.625rem;
+            letter-spacing: -0.01em;
+        }
+        .article-card h2 a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        .article-card h2 a:hover {
+            color: var(--accent);
+        }
+        .summary {
+            color: var(--text-secondary);
+            font-size: 0.925rem;
+            line-height: 1.65;
+        }
+        footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        footer p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        @media (max-width: 600px) {
+            .container { padding: 1.5rem 1rem 2rem; }
+            header { padding: 1.5rem 0; }
+            .logo { font-size: 1.75rem; }
+            .article-card { padding: 1.25rem; border-radius: 10px; }
+            .article-card h2 { font-size: 1rem; }
+        }
     </style>
 </head>
 <body>
-    <header>
-        <h1>📰 AI News Digest</h1>
-        <p class="meta">20 articles • Last updated: 2026-02-03 15:01 UTC</p>
-    </header>
-    <main>
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">Ars Technica</span>
-            <span class="date">Feb 03, 2026</span>
-        </div>
-        <h2><a href="https://arstechnica.com/ai/2026/02/the-rise-of-moltbook-suggests-viral-ai-prompts-may-be-the-next-big-security-threat/" target="_blank" rel="noopener">The rise of Moltbook suggests viral AI prompts may be the next big security threat</a></h2>
-        <p class="summary">On November 2, 1988, graduate student Robert Morris released a self-replicating program into the early Internet.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Feb 03, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/ronnie-sheth-ceo-senen-group-why-now-is-the-time-for-enterprise-ai-to-get-practical/" target="_blank" rel="noopener">Ronnie Sheth, CEO, SENEN Group: Why now is the time for enterprise AI to ‘get practical’</a></h2>
-        <p class="summary">Before you set sail on your AI journey, always check the state of your data – because if there is one thing likely to sink your ship, it is data quality.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Feb 03, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/fedex-tests-how-far-ai-can-go-in-tracking-and-returns-management/" target="_blank" rel="noopener">FedEx tests how far AI can go in tracking and returns management</a></h2>
-        <p class="summary">FedEx is using AI to change how package tracking and returns work for large enterprise shippers. For companies moving high volumes of goods, tracking no longer ends when a package leaves the...</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/elon-musk-spacex-acquires-xai-data-centers-space-merger/" target="_blank" rel="noopener">Elon Musk’s SpaceX officially acquires Elon Musk’s xAI, with plan to build data centers in space</a></h2>
-        <p class="summary">The merger creates the world's most valuable private company and paves the way for Musk to try and prove out the usefulness of space-based data centers.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/what-snowflakes-deal-with-openai-tells-us-about-the-enterprise-ai-race/" target="_blank" rel="noopener">What Snowflake’s deal with OpenAI tells us about the enterprise AI race</a></h2>
-        <p class="summary">Snowflake is the latest enterprise to sign multi-year deals with multiple AI companies in what could be a sign to come of a future trend.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/firefox-will-soon-let-you-block-all-of-its-generative-ai-features/" target="_blank" rel="noopener">Firefox will soon let you block all of its generative AI features</a></h2>
-        <p class="summary">Starting with Firefox 148 arriving later this month, users will find a new AI controls section within the desktop browser settings.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/openai-launches-new-macos-app-for-agentic-coding/" target="_blank" rel="noopener">OpenAI launches new macOS app for agentic coding</a></h2>
-        <p class="summary">OpenAI has released a new macOS app for Codex, integrating many of the agentic coding practices that have become popular since Codex launched last year.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/ring-brings-its-search-party-feature-for-finding-lost-dogs-to-non-ring-camera-owners/" target="_blank" rel="noopener">Ring brings its ‘Search Party’ feature for finding lost dogs to non-Ring camera owners</a></h2>
-        <p class="summary">Ring's Search Party feature for finding lost dogs is now available across the U.S. — even if you don't own a Ring camera.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/klarna-backs-google-ucp-power-ai-agent-payments/" target="_blank" rel="noopener">Klarna backs Google UCP to power AI agent payments</a></h2>
-        <p class="summary">Klarna aims to address the lack of interoperability between conversational AI agents and backend payment systems by backing Google’s Universal Commerce Protocol (UCP), an open standard designed to...</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/coalition-demands-federal-grok-ban-over-nonconsensual-sexual-content/" target="_blank" rel="noopener">Coalition demands federal Grok ban over nonconsensual sexual content</a></h2>
-        <p class="summary">Nonprofits urge the U.S. government to suspend Grok in federal agencies after the xAI chatbot generated thousands of nonconsensual sexual images, raising national security and child safety concerns.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/carbon-robotics-built-an-ai-model-that-detects-and-identifies-plants/" target="_blank" rel="noopener">Carbon Robotics built an AI model that detects and identifies plants</a></h2>
-        <p class="summary">Carbon Robotics' Large Plant Model will allow farmers to kill new types of weeds without having to retrain the machines.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/linq-raises-20m-to-enable-ai-assistants-to-live-within-messaging-apps/" target="_blank" rel="noopener">Linq raises $20M to enable AI assistants to live within messaging apps</a></h2>
-        <p class="summary">Linq offers an API that lets companies offer their AI assistants via iMessage, RCS, and SMS.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/how-sap-modernising-hmrc-tax-infrastructure-with-ai/" target="_blank" rel="noopener">How SAP is modernising HMRC’s tax infrastructure with AI</a></h2>
-        <p class="summary">HMRC has selected SAP to overhaul its core revenue systems and place AI at the centre of the UK’s tax administration strategy.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/thoughtspot-on-the-new-fleet-of-agents-delivering-modern-analytics/" target="_blank" rel="noopener">ThoughtSpot: On the new fleet of agents delivering modern analytics</a></h2>
-        <p class="summary">If you are a data and analytics leader, then you know agentic AI is fuelling unprecedented speed of change right now.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 02, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/02/ai-notetaker-hardware-devices-pins-pendants-record-transcribe/" target="_blank" rel="noopener">These AI notetaking devices can help you record and transcribe your meetings</a></h2>
-        <p class="summary">These physical notetakers transcribe audio and give users summaries and action items of meetings using AI. Some even offer live translation.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">TechCrunch</span>
-            <span class="date">Feb 01, 2026</span>
-        </div>
-        <h2><a href="https://techcrunch.com/2026/02/01/ai-layoffs-or-ai-washing/" target="_blank" rel="noopener">AI layoffs or ‘AI-washing’?</a></h2>
-        <p class="summary">How many of the companies with recent layoffs are just using AI as an excuse?</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">Ars Technica</span>
-            <span class="date">Jan 30, 2026</span>
-        </div>
-        <h2><a href="https://arstechnica.com/information-technology/2026/01/ai-agents-now-have-their-own-reddit-style-social-network-and-its-getting-weird-fast/" target="_blank" rel="noopener">AI agents now have their own Reddit-style social network, and it's getting weird fast</a></h2>
-        <p class="summary">On Friday, a Reddit-style social network called Moltbook reportedly crossed 32,000 registered AI agent users, creating what may be the largest-scale experiment in machine-to-machine social...</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">Ars Technica</span>
-            <span class="date">Jan 30, 2026</span>
-        </div>
-        <h2><a href="https://arstechnica.com/ai/2026/01/developers-say-ai-coding-tools-work-and-thats-precisely-what-worries-them/" target="_blank" rel="noopener">Developers say AI coding tools work—and that's precisely what worries them</a></h2>
-        <p class="summary">Software developers have spent the past two years watching AI coding tools evolve from advanced autocomplete into something that can, in some cases , build entire applications from a text prompt.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Jan 30, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/travelers-ai-in-contact-centres-two-stage-innovation-strategy/" target="_blank" rel="noopener">AI use surges at Travelers as call centre roles reduce</a></h2>
-        <p class="summary">Mid-January saw insurance company, Travelers , announce a new deal that empowers 10,000 engineers and data scientists with AI assistants.</p>
-    </article>
-
-    <article class="article-card">
-        <div class="article-meta">
-            <span class="source">AI News</span>
-            <span class="date">Jan 30, 2026</span>
-        </div>
-        <h2><a href="https://www.artificialintelligence-news.com/news/pepsico-is-using-ai-to-rethink-how-factories-are-designed-and-updated/" target="_blank" rel="noopener">PepsiCo is using AI to rethink how factories are designed and updated</a></h2>
-        <p class="summary">For many large companies, the most useful form of AI right now has little to do with writing emails or answering questions.</p>
-    </article></main>
-    <footer><p>Auto-generated from public RSS feeds. Content belongs to original sources.</p></footer>
+    <div class="container">
+        <header>
+            <h1 class="logo">AI News Digest</h1>
+            <p class="tagline">20 articles • Updated 2026-02-03 15:20 UTC</p>
+        </header>
+        <div class="divider"></div>
+        <main><article class="article-card">
+    <div class="article-meta">
+        <span class="source">Ars Technica</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 03, 2026</span>
+    </div>
+    <h2><a href="https://arstechnica.com/ai/2026/02/the-rise-of-moltbook-suggests-viral-ai-prompts-may-be-the-next-big-security-threat/" target="_blank" rel="noopener">The rise of Moltbook suggests viral AI prompts may be the next big security threat</a></h2>
+    <p class="summary">On November 2, 1988, graduate student Robert Morris released a self-replicating program into the early Internet.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 03, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/ronnie-sheth-ceo-senen-group-why-now-is-the-time-for-enterprise-ai-to-get-practical/" target="_blank" rel="noopener">Ronnie Sheth, CEO, SENEN Group: Why now is the time for enterprise AI to ‘get practical’</a></h2>
+    <p class="summary">Before you set sail on your AI journey, always check the state of your data – because if there is one thing likely to sink your ship, it is data quality.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 03, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/fedex-tests-how-far-ai-can-go-in-tracking-and-returns-management/" target="_blank" rel="noopener">FedEx tests how far AI can go in tracking and returns management</a></h2>
+    <p class="summary">FedEx is using AI to change how package tracking and returns work for large enterprise shippers. For companies moving high volumes of goods, tracking no longer ends when a package leaves the...</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/elon-musk-spacex-acquires-xai-data-centers-space-merger/" target="_blank" rel="noopener">Elon Musk’s SpaceX officially acquires Elon Musk’s xAI, with plan to build data centers in space</a></h2>
+    <p class="summary">The merger creates the world's most valuable private company and paves the way for Musk to try and prove out the usefulness of space-based data centers.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/what-snowflakes-deal-with-openai-tells-us-about-the-enterprise-ai-race/" target="_blank" rel="noopener">What Snowflake’s deal with OpenAI tells us about the enterprise AI race</a></h2>
+    <p class="summary">Snowflake is the latest enterprise to sign multi-year deals with multiple AI companies in what could be a sign to come of a future trend.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/firefox-will-soon-let-you-block-all-of-its-generative-ai-features/" target="_blank" rel="noopener">Firefox will soon let you block all of its generative AI features</a></h2>
+    <p class="summary">Starting with Firefox 148 arriving later this month, users will find a new AI controls section within the desktop browser settings.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/openai-launches-new-macos-app-for-agentic-coding/" target="_blank" rel="noopener">OpenAI launches new macOS app for agentic coding</a></h2>
+    <p class="summary">OpenAI has released a new macOS app for Codex, integrating many of the agentic coding practices that have become popular since Codex launched last year.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/ring-brings-its-search-party-feature-for-finding-lost-dogs-to-non-ring-camera-owners/" target="_blank" rel="noopener">Ring brings its ‘Search Party’ feature for finding lost dogs to non-Ring camera owners</a></h2>
+    <p class="summary">Ring's Search Party feature for finding lost dogs is now available across the U.S. — even if you don't own a Ring camera.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/klarna-backs-google-ucp-power-ai-agent-payments/" target="_blank" rel="noopener">Klarna backs Google UCP to power AI agent payments</a></h2>
+    <p class="summary">Klarna aims to address the lack of interoperability between conversational AI agents and backend payment systems by backing Google’s Universal Commerce Protocol (UCP), an open standard designed to...</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/coalition-demands-federal-grok-ban-over-nonconsensual-sexual-content/" target="_blank" rel="noopener">Coalition demands federal Grok ban over nonconsensual sexual content</a></h2>
+    <p class="summary">Nonprofits urge the U.S. government to suspend Grok in federal agencies after the xAI chatbot generated thousands of nonconsensual sexual images, raising national security and child safety concerns.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/carbon-robotics-built-an-ai-model-that-detects-and-identifies-plants/" target="_blank" rel="noopener">Carbon Robotics built an AI model that detects and identifies plants</a></h2>
+    <p class="summary">Carbon Robotics' Large Plant Model will allow farmers to kill new types of weeds without having to retrain the machines.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/linq-raises-20m-to-enable-ai-assistants-to-live-within-messaging-apps/" target="_blank" rel="noopener">Linq raises $20M to enable AI assistants to live within messaging apps</a></h2>
+    <p class="summary">Linq offers an API that lets companies offer their AI assistants via iMessage, RCS, and SMS.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/how-sap-modernising-hmrc-tax-infrastructure-with-ai/" target="_blank" rel="noopener">How SAP is modernising HMRC’s tax infrastructure with AI</a></h2>
+    <p class="summary">HMRC has selected SAP to overhaul its core revenue systems and place AI at the centre of the UK’s tax administration strategy.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/thoughtspot-on-the-new-fleet-of-agents-delivering-modern-analytics/" target="_blank" rel="noopener">ThoughtSpot: On the new fleet of agents delivering modern analytics</a></h2>
+    <p class="summary">If you are a data and analytics leader, then you know agentic AI is fuelling unprecedented speed of change right now.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 02, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/02/ai-notetaker-hardware-devices-pins-pendants-record-transcribe/" target="_blank" rel="noopener">These AI notetaking devices can help you record and transcribe your meetings</a></h2>
+    <p class="summary">These physical notetakers transcribe audio and give users summaries and action items of meetings using AI. Some even offer live translation.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">TechCrunch</span>
+        <span class="separator">•</span>
+        <span class="date">Feb 01, 2026</span>
+    </div>
+    <h2><a href="https://techcrunch.com/2026/02/01/ai-layoffs-or-ai-washing/" target="_blank" rel="noopener">AI layoffs or ‘AI-washing’?</a></h2>
+    <p class="summary">How many of the companies with recent layoffs are just using AI as an excuse?</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">Ars Technica</span>
+        <span class="separator">•</span>
+        <span class="date">Jan 30, 2026</span>
+    </div>
+    <h2><a href="https://arstechnica.com/information-technology/2026/01/ai-agents-now-have-their-own-reddit-style-social-network-and-its-getting-weird-fast/" target="_blank" rel="noopener">AI agents now have their own Reddit-style social network, and it's getting weird fast</a></h2>
+    <p class="summary">On Friday, a Reddit-style social network called Moltbook reportedly crossed 32,000 registered AI agent users, creating what may be the largest-scale experiment in machine-to-machine social...</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">Ars Technica</span>
+        <span class="separator">•</span>
+        <span class="date">Jan 30, 2026</span>
+    </div>
+    <h2><a href="https://arstechnica.com/ai/2026/01/developers-say-ai-coding-tools-work-and-thats-precisely-what-worries-them/" target="_blank" rel="noopener">Developers say AI coding tools work—and that's precisely what worries them</a></h2>
+    <p class="summary">Software developers have spent the past two years watching AI coding tools evolve from advanced autocomplete into something that can, in some cases , build entire applications from a text prompt.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Jan 30, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/travelers-ai-in-contact-centres-two-stage-innovation-strategy/" target="_blank" rel="noopener">AI use surges at Travelers as call centre roles reduce</a></h2>
+    <p class="summary">Mid-January saw insurance company, Travelers , announce a new deal that empowers 10,000 engineers and data scientists with AI assistants.</p>
+</article>
+<article class="article-card">
+    <div class="article-meta">
+        <span class="source">AI News</span>
+        <span class="separator">•</span>
+        <span class="date">Jan 30, 2026</span>
+    </div>
+    <h2><a href="https://www.artificialintelligence-news.com/news/pepsico-is-using-ai-to-rethink-how-factories-are-designed-and-updated/" target="_blank" rel="noopener">PepsiCo is using AI to rethink how factories are designed and updated</a></h2>
+    <p class="summary">For many large companies, the most useful form of AI right now has little to do with writing emails or answering questions.</p>
+</article></main>
+        <footer>
+            <p>Auto-generated from public RSS feeds. Content belongs to original sources.</p>
+        </footer>
+    </div>
 </body>
 </html>
